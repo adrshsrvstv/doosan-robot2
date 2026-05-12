@@ -5,6 +5,7 @@
   <xacro:macro name="m1013_ros2_control" params="
   name
   prefix:=''
+  use_mock_hw:=false
   host:=0.0.0.0
   rt_host:=0.0.0.0
   port:=12345
@@ -24,14 +25,19 @@
     <xacro:property name="neg_double_pi" value="${-2.0 * pi}"/>
     <ros2_control name="${name}" type="system">
       <hardware>
-        <plugin>dsr_hardware2/DRHWInterface</plugin>
-        <param name="host">${host}</param>
-        <param name="rt_host">${rt_host}</param>
-        <param name="port">${port}</param>
-        <param name="mode">${mode}</param>
-        <param name="model">${model}</param>
-        <param name="update_rate">${update_rate}</param>
-        <param name="apply_initial_state_on_start">${apply_initial_state_on_start}</param>
+        <xacro:if value="${use_mock_hw}">
+          <plugin>mock_components/GenericSystem</plugin>
+        </xacro:if>
+        <xacro:unless value="${use_mock_hw}">
+          <plugin>dsr_hardware2/DRHWInterface</plugin>
+          <param name="host">${host}</param>
+          <param name="rt_host">${rt_host}</param>
+          <param name="port">${port}</param>
+          <param name="mode">${mode}</param>
+          <param name="model">${model}</param>
+          <param name="update_rate">${update_rate}</param>
+          <param name="apply_initial_state_on_start">${apply_initial_state_on_start}</param>
+        </xacro:unless>
       </hardware>
 
       <!-- Arm joints only -->
